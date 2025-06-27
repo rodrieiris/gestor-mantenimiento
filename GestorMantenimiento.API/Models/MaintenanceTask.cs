@@ -13,11 +13,12 @@ namespace GestorMantenimiento.API.Models
         [Required]
         public DateTime ScheduledDate { get; set; }
 
-        public bool IsCompleted { get; set; } = false;
+        public MaintenanceStatus Status { get; set; } = MaintenanceStatus.Pending;
 
         // Relación con Machine
         [ForeignKey("Machine")]
         public int MachineId { get; set; }
+
         public Machine? Machine { get; set; }
     }
 }

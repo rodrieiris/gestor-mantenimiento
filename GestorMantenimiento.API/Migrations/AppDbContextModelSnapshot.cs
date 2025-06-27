@@ -52,14 +52,14 @@ namespace GestorMantenimiento.API.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("IsCompleted")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int>("MachineId")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("ScheduledDate")
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 

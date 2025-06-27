@@ -1,5 +1,6 @@
 using GestorMantenimiento.API.Data;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +22,12 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // ESTA LÍNEA ACTIVA LOS CONTROLADORES MVC
 builder.Services.AddControllers().AddJsonOptions(x =>
     x.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles);
+
+builder.Services.AddControllers().AddJsonOptions(x =>
+{
+    x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); // Habilita enums como strings
+});
 
 
 var app = builder.Build();
