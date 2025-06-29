@@ -2,9 +2,11 @@ using Microsoft.AspNetCore.Mvc;
 using GestorMantenimiento.API.Models;
 using GestorMantenimiento.API.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GestorMantenimiento.API.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class MachineController : ControllerBase
@@ -36,6 +38,7 @@ namespace GestorMantenimiento.API.Controllers
 
         // POST: api/Machine
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<Machine>> PostMachine(Machine machine)
         {
             _context.Machines.Add(machine);
@@ -46,6 +49,7 @@ namespace GestorMantenimiento.API.Controllers
 
         // PUT: api/Machine/5
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> PutMachine(int id, Machine machine)
         {
             if (id != machine.Id)
@@ -70,6 +74,7 @@ namespace GestorMantenimiento.API.Controllers
 
         // DELETE: api/Machine/5
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteMachine(int id)
         {
             var machine = await _context.Machines.FindAsync(id);

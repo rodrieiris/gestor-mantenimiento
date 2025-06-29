@@ -1,7 +1,9 @@
-<nav>
-  <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
-  <a routerLink="/machines" routerLinkActive="active">Machines</a>
-  <a routerLink="/tasks" routerLinkActive="active">Tasks</a>
+<nav *ngIf="showHeader" class="header">
+  <a *ngIf="!auth.isLoggedIn" routerLink="/login">Login</a>
+  <a *ngIf="auth.isLoggedIn" routerLink="/dashboard">Dashboard</a>
+  <a *ngIf="auth.isLoggedIn" routerLink="/machines">Machines</a>
+  <a *ngIf="auth.isLoggedIn" routerLink="/tasks">Tasks</a>
+  <a *ngIf="auth.isLoggedIn" (click)="auth.logout()">Logout</a>
 </nav>
 
 <router-outlet></router-outlet>

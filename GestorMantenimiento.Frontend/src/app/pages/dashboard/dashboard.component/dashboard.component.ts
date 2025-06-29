@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
+import { AuthService } from '../../../services/auth.service';
 import { TaskService } from '../../../services/task.service';
 import { DashboardStats } from '../../../models/dashboard-stats.model';
 
@@ -14,7 +16,11 @@ export class DashboardComponent implements OnInit {
   stats?: DashboardStats;
   loading = false;
 
-  constructor(private svc: TaskService) { }
+  constructor(
+    private svc: TaskService,
+    private authService: AuthService,
+    private router: Router
+  ) { }
 
   ngOnInit() {
     this.loadStats();
@@ -28,8 +34,13 @@ export class DashboardComponent implements OnInit {
         this.loading = false;
       },
       error: err => {
-        console.error('Error cargando estadísticas', err);
         this.loading = false;
+        if (err.status === 401) {
+          this.authService.logout();
+          this.router.navigate(['/login']);
+        } else {
+          console.error('Error cargando estadísticas', err);
+        }
       }
     });
   }

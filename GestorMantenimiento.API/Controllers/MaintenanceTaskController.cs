@@ -2,9 +2,11 @@ using Microsoft.AspNetCore.Mvc;
 using GestorMantenimiento.API.Models;
 using GestorMantenimiento.API.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GestorMantenimiento.API.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class MaintenanceTaskController : ControllerBase
@@ -45,6 +47,7 @@ namespace GestorMantenimiento.API.Controllers
 
         // POST: api/MaintenanceTask
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<MaintenanceTask>> CreateTask(MaintenanceTask task)
         {
             // Validar si la máquina existe
@@ -60,6 +63,7 @@ namespace GestorMantenimiento.API.Controllers
 
         // PUT: api/MaintenanceTask/5
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateTask(int id, MaintenanceTask task)
         {
             if (id != task.Id) return BadRequest();
@@ -83,6 +87,7 @@ namespace GestorMantenimiento.API.Controllers
 
         // DELETE: api/MaintenanceTask/5
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteTask(int id)
         {
             var task = await _context.MaintenanceTasks.FindAsync(id);
@@ -96,6 +101,7 @@ namespace GestorMantenimiento.API.Controllers
 
         // PATCH: api/maintenancetask/{id}/complete
         [HttpPatch("{id}/complete")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> MarkTaskAsCompleted(int id)
         {
             var task = await _context.MaintenanceTasks.FindAsync(id);

@@ -1,62 +1,64 @@
 using GestorMantenimiento.API.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using System.Text.Json.Serialization;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Servicios
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options =>
-{
-    options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
-    {
-        Title = "Gestor de Mantenimiento API",
-        Version = "v1",
-        Description = "API REST para el mantenimiento preventivo de maquinaria industrial"
-    });
-});
-
+builder.Services.AddSwaggerGen();
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAngularDev", policy =>
+    options.AddPolicy("AllowAngularDev", p =>
+        p.WithOrigins("http://localhost:4200")
+        .AllowAnyHeader()
+        .AllowAnyMethod());
+});
+builder.Services.AddDbContext<AppDbContext>(opt =>
+    opt.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+var key = Encoding.ASCII.GetBytes(builder.Configuration["Jwt:Key"]!);
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.RequireHttpsMetadata = false;
+    options.SaveToken = true;
+    options.TokenValidationParameters = new TokenValidationParameters
     {
-        policy
-            .WithOrigins("http://localhost:4200")
-            .AllowAnyHeader()
-            .AllowAnyMethod();
-    });
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(key),
+        ValidateIssuer = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidateAudience = true,
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        ValidateLifetime = true
+    };
+});
+builder.Services.AddAuthorization();
+
+builder.Services.AddControllers().AddJsonOptions(opts =>
+{
+    opts.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    opts.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    opts.JsonSerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase;
 });
 
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-// ESTA LÍNEA ACTIVA LOS CONTROLADORES MVC
-builder.Services
-    .AddControllers()
-    .AddJsonOptions(opts =>
-    {
-        opts.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-        opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-        opts.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-        opts.JsonSerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase;
-    });
-
-
 var app = builder.Build();
-
-// Middleware
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
 app.UseCors("AllowAngularDev");
-
-// app.UseHttpsRedirection();
-
-// ESTA LÍNEA REGISTRA LAS RUTAS DE LOS CONTROLADORES
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapControllers();
-
 app.Run();
