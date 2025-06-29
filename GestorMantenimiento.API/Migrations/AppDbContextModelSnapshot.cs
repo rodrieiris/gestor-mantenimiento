@@ -52,6 +52,9 @@ namespace GestorMantenimiento.API.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("MachineId")
                         .HasColumnType("INTEGER");
 

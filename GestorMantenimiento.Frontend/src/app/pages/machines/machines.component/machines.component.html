@@ -1,0 +1,32 @@
+<h2>Máquinas registradas</h2>
+
+<form [formGroup]="form" (ngSubmit)="submit()">
+    <input class="name" formControlName="name" placeholder="Nombre" required />
+    <input class="serialNumber" formControlName="serialNumber" placeholder="Nº Serie" required />
+    <input type="date" formControlName="installationDate" required />
+    <label>
+        <input type="checkbox" formControlName="isActive" /> Activa
+    </label>
+    <button type="submit">{{ form.value.id ? 'Actualizar' : 'Crear' }}</button>
+</form>
+
+<table *ngIf="machines.length; else noData">
+    <thead>…</thead>
+    <tbody>
+        <tr *ngFor="let m of machines">
+            <td>{{ m.id }}</td>
+            <td>{{ m.name }}</td>
+            <td>{{ m.serialNumber }}</td>
+            <td>{{ m.installationDate | date:'shortDate' }}</td>
+            <td>{{ m.isActive }}</td>
+            <td>
+                <button (click)="edit(m)">✎</button>
+                <button (click)="remove(m.id)">🗑️</button>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<ng-template #noData>
+    <p>No hay máquinas registradas.</p>
+</ng-template>

@@ -20,5 +20,7 @@ namespace GestorMantenimiento.API.Models
         public int MachineId { get; set; }
 
         public Machine? Machine { get; set; }
+
+        public bool IsCompleted { get; set; } = false;
     }
 }

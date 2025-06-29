@@ -1,0 +1,61 @@
+<h2>Tareas de Mantenimiento</h2>
+
+<div class="form-container">
+    <form [formGroup]="form" (ngSubmit)="submit()">
+        <!-- Descripción -->
+        <div class="field">
+            <input formControlName="description" placeholder=" " required />
+            <label>Descripción</label>
+        </div>
+
+        <div class="field">
+            <input type="date" formControlName="scheduledDate" placeholder=" " required />
+            <label>Fecha Programada</label>
+        </div>
+
+        <div class="field">
+            <input type="number" formControlName="machineId" placeholder=" " required min="1" />
+            <label>ID Máquina</label>
+        </div>
+
+        <div class="checkbox-group">
+            <input type="checkbox" formControlName="isCompleted" id="completed" />
+            <label for="completed">Completada</label>
+        </div>
+
+        <button type="submit">{{ form.value.id ? 'Actualizar' : 'Crear' }}</button>
+    </form>
+</div>
+
+<div class="table-wrapper">
+    <table *ngIf="tasks.length; else noData">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Descripción</th>
+                <th>Fecha</th>
+                <th>Máquina</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let t of tasks">
+                <td>{{ t.id }}</td>
+                <td>{{ t.description }}</td>
+                <td>{{ t.scheduledDate | date:'shortDate' }}</td>
+                <td>{{ t.machineId }}</td>
+                <td>{{ t.isCompleted ? '✔️' : '❌' }}</td>
+                <td class="actions">
+                    <button (click)="edit(t)">✎</button>
+                    <button (click)="remove(t.id)">🗑️</button>
+                    <button *ngIf="!t.isCompleted" (click)="markCompleted(t.id)">✔️</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<ng-template #noData>
+    <p>No hay tareas registradas.</p>
+</ng-template>

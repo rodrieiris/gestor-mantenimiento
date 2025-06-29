@@ -1,0 +1,39 @@
+<div class="dashboard-header">
+    <h2>Estadísticas de Tareas</h2>
+    <button (click)="loadStats()" [disabled]="loading">
+        <span *ngIf="!loading">🔄 Refrescar</span>
+        <span *ngIf="loading">⏳ Cargando…</span>
+    </button>
+</div>
+
+<div *ngIf="stats; else noStats" class="stats-cards">
+    <div class="card total">
+        <div class="icon">📊</div>
+        <div class="value">{{ stats.total }}</div>
+        <div class="label">Total</div>
+    </div>
+    <div class="card pending">
+        <div class="icon">⏳</div>
+        <div class="value">{{ stats.pending }}</div>
+        <div class="label">Pendientes</div>
+    </div>
+    <div class="card in-progress">
+        <div class="icon">▶️</div>
+        <div class="value">{{ stats.inProgress }}</div>
+        <div class="label">En Progreso</div>
+    </div>
+    <div class="card completed">
+        <div class="icon">✅</div>
+        <div class="value">{{ stats.completed }}</div>
+        <div class="label">Completadas</div>
+    </div>
+    <div class="card cancelled">
+        <div class="icon">❌</div>
+        <div class="value">{{ stats.cancelled }}</div>
+        <div class="label">Canceladas</div>
+    </div>
+</div>
+
+<ng-template #noStats>
+    <p class="no-data">No hay estadísticas disponibles.</p>
+</ng-template>
