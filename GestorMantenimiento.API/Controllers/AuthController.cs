@@ -40,7 +40,7 @@ namespace GestorMantenimiento.API.Controllers
 
         private object GenerateJwt(Claim[] claims)
         {
-            var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_cfg["Jwt:Key"]));
+            var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_cfg["Jwt:Key"]!));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var token = new JwtSecurityToken(
                 issuer: _cfg["Jwt:Issuer"],
